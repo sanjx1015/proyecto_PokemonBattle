@@ -1,0 +1,8 @@
+
+#history p{
+    background: #fff;
+    border-radius: 8px;
+    padding: 5px;
+    margin: 5px;
+    box-shadow: 0 0 5px rgb(0,0,0,0.2);
+}
