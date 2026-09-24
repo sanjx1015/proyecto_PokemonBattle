@@ -1,8 +1,74 @@
+body{
+    font-family: sans-serif;
+    background-color: lightblue;
+    display: flex;
+    justify-content: center;
+    font-display: column;
+    font-size: 18px;
+}
 
-#history p{
-    background: #fff;
-    border-radius: 8px;
-    padding: 5px;
-    margin: 5px;
-    box-shadow: 0 0 5px rgb(0,0,0,0.2);
+h1{
+    padding-top: 30 px;
+    text-align: center;
+}
+.data{
+    width: 600px;
+    display:flex;
+    height: 500px;
+    margin: 30px 0;
+}
+
+.data > div{
+    width: 300px;
+    text-align: center;
+}
+
+#root{
+    margin-top: 15px;
+    width: 600px;
+    text-align: center;
+}
+
+#buttom-div{
+    display: flex;
+    align-items: center;
+}
+
+button{
+    color: white;
+    align-items: center;
+    border-radius: 10px;
+    padding: 8px;
+    margin: 0 10px;
+    background-color: rgb(77, 19, 165);
+}
+
+button:hover{
+    box-shadow: 0px 0px 3px 3px rgba(150,150,150, 0.6);
+}
+
+
+.pokeCard{
+    margin: 4 px 0;
+    font-size: 0.9em;
+    color: #333;
+}
+
+.pokeCard h3{
+    text-transform: capitalize;
+}
+
+.data div:last-child{
+    position:relative;
+}
+
+.data div:first-child{
+    position: relative;
+}
+
+.pokeCard{
+    border-radius: 10px;
+    box-shadow: 1px 1px 5px 5px rgb(150,200,210, 2);
+    margin: 10px;
+    border: 3px solid rgb(20, 179, 47);
 }

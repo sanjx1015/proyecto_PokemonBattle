@@ -1,5 +1,5 @@
+/*https://github.com/jenesh/Battle-Pokemons-using-PokeAPI */
 
-let pokeHistory=[];
 
 /*PREPARAR EL ENTORNO*/
 //DOMContent asegura que el HTML este listo antes de ejecutar el js, y conecta los botones 
@@ -14,7 +14,11 @@ document.addEventListener('DOMContentLoaded', () =>{
 
     //Boton para iniciar batalla
     document.querySelector('#battle-btn').addEventListener('click',()=>{
+        const resultAnterior = document.querySelector('.battle-result');
+
+        document.querySelector('.battle-result')?.remove();
         battlePokemon();
+        
     });
 });
 
@@ -49,37 +53,24 @@ const renderPokemonSync = (pokeData)=>{
     displayPokemonData(pokeData[1]);
 };
 
-//crea un div con clase .pokeCard, miestra nombre, sprite y hp, y lo agrega a .data
-const displayPokemonData = (data) => {
-    const pokeContainer = document.createElement('div');
-    pokeContainer.setAttribute('class', 'pokeCard');
-
-    const name = document.createElement('h3');
-    name.setAttribute('class','pokemon-name');
-    name.innerHTML= data.data.name;
-
-    const img = document.createElement('img');
-    img.src = data.data.sprites.front_default;
-
-    const hp= document.createElement ('p');
-    hp.innerText = `HP: ${data.data.stats[5].base_stat}`;
-
-    pokeContainer.appendChild(name);
-    pokeContainer.appendChild(img);
-    pokeContainer.appendChild(hp);
-
-    document.querySelector('.data').appendChild(pokeContainer);
+const getNewPokemon = async () =>{
+    await getPokemon();
 };
 
 /*BATALLA POKEMON*/
 // usamos Math.random para elegir ganador/muestra el resultado en el historial/llama a getNewPokemon para refrescar la arena
 const battlePokemon = () =>{
-    const randomNumber= Math.random();
-    const battleResult = document.createElement('p');
-    const battleHistory = document.querySelector('#history');
+    const pokemonName = document.querySelectorAll('.pokemon-name');
 
-    const pokemon1 = document.querySelector('.pokemon-name')[0].innerText;
-    const pokemon2 = document.querySelector('.pokemon-name')[1].innerText;
+    const pokemon1 = pokemonName[0].innerText;
+    const pokemon2 = pokemonName[1].innerText;
+
+    const battleResult = document.createElement('p');
+
+    battleResult.classList.add('battle-result');
+
+
+    const randomNumber= Math.random();
 
     if (randomNumber < 0.5){
         battleResult.innerText = `${pokemon1} vencio a ${pokemon2}`;
@@ -87,18 +78,87 @@ const battlePokemon = () =>{
         battleResult.innerText= `${pokemon2} vencio a ${pokemon1}`;
     }
 
-    battleHistory.prepend(battleResult);
-    getNewPokemon(); //Al terminar la batalla, carga nuevos pokemones
+    document.querySelector('.data').appendChild(battleResult);
+
+
+
+    /*
+    const randomNumber= Math.random();
+    const battleResult = document.createElement('p');
+
+    const pokemon1 = document.querySelectorAll('.pokemon-name')[0].innerText;
+    const pokemon2 = document.querySelector('.pokemon-name')[1].innerText;
+
+    if (randomNumber < 0.5){
+        battleResult.innerText = `${pokemon1} vencio a ${pokemon2}`;
+    }else{
+        battleResult.innerText= `${pokemon2} vencio a ${pokemon1}`;
+    }
+    //Mostrar el resultado
+    document.getElementById('data').appendChild(battleResult);
+    
+    getNewPokemon(); //Al terminar la batalla, carga nuevos pokemones*/
 };
 
-const getNewPokemon = async () =>{
-    document.querySelector('.data').innerHTML = '';
-    await getPokemon();
-};
+const getUniqueNumber = (history, max)=>{
+    const ranNum = Math.floor(Math.random() * max);
+    if(!history.includes(ranNum)){
+        history.push(ranNum);
+        return ranNum;
+    }else{
+        return getUniqueNumber(history, max);
+    }
+}
+
 
 //pedir pokemon por ID
 const makeApiCall = async (id) => {
-    return await axios.get('https://pokeapi.co/api/v2/pokemon/ditto');
+    return await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
 };
 
 const makeMovesApiCall = async (url) => await axios.get(url);
+
+
+//crea un div con clase .pokeCard, miestra nombre, sprite y hp, y lo agrega a .data
+const displayPokemonData = (data) => {
+
+    const pokeContainer = document.createElement('div');
+    pokeContainer.setAttribute('class', 'pokeCard');
+
+    //NOMBRE
+    const name = document.createElement('h3');
+    name.setAttribute('class','pokemon-name');
+    name.innerHTML= data.data.name;
+
+    //IMAGEN
+    const img = document.createElement('img');
+    img.src = data.data.sprites.front_default;
+
+    //HP
+    const hp= document.createElement ('p');
+    hp.innerText = `HP: ${data.data.stats[5].base_stat}`;
+
+    //MOVIMIENTOS
+    const moves = document.createElement('p');
+    moves.innerText = 'Moves:';
+
+    //AGREGAR ELEMENTOS BASICOS
+    pokeContainer.appendChild(name);
+    pokeContainer.appendChild(img);
+    pokeContainer.appendChild(hp);
+    pokeContainer.appendChild(moves);
+
+    //4 MOVIMIENTOS ALEATORIOS
+    let movesHistory = [];
+    for (let i = 0; i < 4; i ++){
+        const moveIndex = getUniqueNumber(movesHistory, data.data.moves.length);
+        const chosenMove = data.data.moves[moveIndex];
+        const move = document.createElement('p');
+
+        move.innerText = chosenMove.move.name;
+        pokeContainer.appendChild(move);
+    }
+    //INSERTAR EN EL CONTENEDOR PRINCIPAL
+    document.querySelector('.data').appendChild(pokeContainer);
+
+};
